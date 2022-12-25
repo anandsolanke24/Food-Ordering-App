@@ -1,0 +1,249 @@
+import random 
+import itertools
+
+class FoodItem:
+    id_obj = itertools.count(1)
+    def __init__(self, Name, Quantity, Price,Discount, Stock):
+        self.FoodID = next(FoodItem.id_obj)
+        self.Name = Name
+        self.Quantity = Quantity
+        self.Price = Price
+        self.Discount = Discount
+        self.Stock = Stock
+     
+    def __str__(self): 
+      return "Food Item: (%s, %s, %s, %s, %s, %s)" % (self.FoodID, self.Name, self.Quantity, self.Price, self.Discount, self.Stock)
+
+
+class User:
+    def __init__(self,full_name,phone_num, email, address, password):  
+      self.full_name = full_name
+      self.phone_num = phone_num
+      self.email = email
+      self.address = address
+      self.password = password
+
+
+
+
+        
+
+if __name__ == "__main__":
+  
+  list_items = []
+  users = []
+  order_history  = {}
+  while(True):
+    print("-------------------------------------------------------------------------------------")
+    print("-------------------------------------------------------------------------------------")
+    print("                      WELCOME TO SP RESTAURANT")
+    print("-------------------------------------------------------------------------------------")
+    print("-------------------------------------------------------------------------------------")
+    print("Press 1 for Admin, 2 for User and 3 for exit")
+    print("-------------------------------------------------------------------------------------")
+    val = int(input())
+
+    #Admin functions
+    if val == 1:
+      while True: 
+        print("*******************************ADMIN**********************************************")
+        print("List Food Items(1)\nEdit Food Item(2)\nDelete Food Items(3)\nAdd Food Item(4)\nexit(5)")
+        print("*********************************************************************************")
+        val = int(input())
+        if val == 5:
+          break
+        #Display food items
+        if val == 1:
+          print("============================FOOD ITEMS:=======================================")
+          print("==============================================================================")
+          if list_items:
+            for item in list_items: 
+              print(item.FoodID, item.Name, item.Quantity, item.Price, item.Discount , item.Stock)
+          else:
+            print("There are no food items present")
+
+        #Edit food item
+        if val == 2:
+          print("Enter FoodID")
+          food_id = int(input())
+          food_item  = [ item for item in list_items if item.FoodID == food_id ]
+
+          print("current available information of food_item is: ")
+          print(food_item[0])
+          while True:
+            print("#####################################################")
+            print("Edit Name(1) Quantity(2) Price(3) Discount(4) Stock(5) Exit(6)")
+            print("#####################################################")
+
+            value = int(input())
+            if value == 1 :
+              food_name = input()
+              setattr(item, 'Name', food_name)
+            if value == 2 :
+              food_quan = input()
+              setattr(item, 'Quantity', food_quan)
+            if value == 3 :
+              food_price = input()
+              setattr(item, 'Price', food_price)
+            if value == 4 :
+              food_discount = input()
+              setattr(item, 'Discount', food_discount)
+            if value == 5 :
+              food_stock = input()
+              setattr(item, 'Stock', food_stock)
+            if value == 6 :
+              break
+          
+          print("updated information of food_item is: ")
+          print(food_item[0])
+
+        #Remove food item
+        if val == 3:
+          print("Enter FoodID")
+          food_id = int(input())
+          food_item = [ item for item in list_items if item.FoodID == food_id ]
+          if food_item :
+            list_items.remove(food_item[0])
+          else:
+            print("FoodId is not present")
+
+        #Add food item
+        if val == 4:
+          print("Enter Following Information:")
+          print("Name:")
+          name = input()
+          print("Quantity:")
+          quantity = input()
+          print("Price:")
+          price = input()
+          print("Discount")
+          discount = input()
+          print("Stock")
+          stock = input()
+          item = FoodItem(name,quantity,price,discount,stock)
+          list_items.append(item)
+
+    #User functionalities
+    if val == 2 :
+      print("**********WELCOME*************************")
+      print("Please login(1) or register(2)")
+      inp = int(input())
+      if inp == 1:
+
+        #take email & password for login
+        print("Please enter email")
+        email = input()
+        print("Please enter password:")
+        password = input() 
+
+        #logic to validate email & password
+        flag  = 0
+        for user in users:
+          if user.email == email and user.password == password:
+            user_for_temp = user
+            print("Login Successful")
+            flag = 1
+            break
+          else:
+            print("Check email or password")
+
+
+        if flag == 1:
+          while True: 
+            print('''🔴Place New Order(1)\n🔴Order History(2)\n🔴Update Profile(3)\n🔴Logout(4)''')
+
+            value = int(input())
+            #place new order
+            if value == 1:
+              print("*****************MENU************************")
+              for item in enumerate(list_items): 
+                print(item[0]+1 ,item[1].Name, item[1].Quantity, item[1].Price, item[1].Discount , item[1].Stock)
+
+              new_order = input("Enter value for order in 1 2 format").split(" ")
+              new_order =  [  int(x)   for x in  new_order  ]
+
+              print("****************Selected Order Is************* ")
+              for order in new_order :
+                print(list_items[order-1])
+
+              print("**********************************************")
+
+              print("Is order confirmed, Yes(Y) or No(N)")
+              ans = input()
+              if ans == 'Y':
+                print("Thank You for placing this order") 
+                if email in order_history: 
+                  order_history[email].append(new_order)
+                else:
+                  order_history[email] = [new_order ]
+
+              elif ans == 'N':
+                print("Okay no problem")
+            
+              
+            #order history  
+            if value == 2:
+              get_history = order_history[email]
+              for order in get_history:
+                for o in order :
+                  print(list_items[o-1])
+
+            #update profile
+            if value == 3:
+              while True:
+                print("Edit full_name(1) phone_num(2) email(3) address(4) password(5) exit(6)")
+                anss  = int(input())
+                index = users.index(user_for_temp)
+                if anss == 1:
+                  namee = input("enter updated full_name")
+                  setattr(users[index], 'full_name', namee)
+
+                if anss == 2:
+                  phone_num = input("enter updated phone_num")
+                  setattr(users[index], 'phone_num', phone_num)
+
+                if anss == 3:
+                  email = input("enter updated email ")
+                  setattr(users[index], 'email', email)
+                
+                if anss == 4:
+                  password = input("enter updated password")
+                  setattr(users[index], 'password', password)
+
+                if anss == 5:
+                  address = input("enter updated address")
+                  setattr(users[index], 'address', address)
+
+                print("Updated User Information Is ")
+                print("User name:\t",users[index].full_name)
+                print("phone num:\t",users[index].phone_num)
+                print("email:\t",users[index].email)
+                print("password:\t",users[index].password)
+                print("address:\t",users[index].address)
+
+                if anss == 6:
+                  break
+            if value == 4:
+              break
+
+
+      #register
+      elif inp == 2:
+        print("please enter following")
+        print("please enter Full Name:")
+        full_name = input()
+        print("please enter Phone Number")
+        phone_num = input()
+        print("please enter Email")
+        email = input()
+        print("please enter Address")
+        address = input()
+        print("please enter Password")
+        password = input()
+        #register
+        user = User(email,phone_num, email, address, password)
+        #add user to list
+        users.append(user)
+
+    if val == 3:
+      break 
